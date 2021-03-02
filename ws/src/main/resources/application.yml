@@ -1,0 +1,10 @@
+server:
+  port: 8021
+
+spring:
+  application:
+    name: api-websocket
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 47.102.121.70:8848

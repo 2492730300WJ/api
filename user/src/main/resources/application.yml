@@ -1,0 +1,10 @@
+server:
+  port: ${API_USER_PORT}
+
+spring:
+  application:
+    name: api-user
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_SERVER_ADDR}

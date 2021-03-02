@@ -1,0 +1,19 @@
+server:
+  port: ${API_GATEWAY_PORT}
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_SERVER_ADDR}
+    gateway:
+      discovery:
+        locator:
+          enabled: true  #开启从注册中心动态创建路由的功能，利用微服务名进行路由
+      routes:
+        - id: api_user_route #路由的ID，没有固定规则但要求唯一，建议配合服务名
+          uri: lb://api-user  #uri以lb://开头（lb代表从注册中心获取服务)
+          predicates:
+            - Path=/user/**
