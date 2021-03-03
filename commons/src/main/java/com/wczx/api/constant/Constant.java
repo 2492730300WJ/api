@@ -1,4 +1,4 @@
-package com.wczx.api.util;
+package com.wczx.api.constant;
 
 /**
  * @author Administrator

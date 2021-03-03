@@ -4,6 +4,11 @@ server:
 spring:
   application:
     name: api-gateway
+  zipkin:
+    base-url: ${ZIPKIN_SERVER_ADDR}
+  sleuth:
+    sampler:
+      probability: 1
   cloud:
     nacos:
       discovery:
@@ -17,3 +22,7 @@ spring:
           uri: lb://api-user  #uri以lb://开头（lb代表从注册中心获取服务)
           predicates:
             - Path=/user/**
+        - id: api_websocket_route #路由的ID，没有固定规则但要求唯一，建议配合服务名
+          uri: lb://api-websocket  #uri以lb://开头（lb代表从注册中心获取服务)
+          predicates:
+             - Path=/ws/**

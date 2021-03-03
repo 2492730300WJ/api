@@ -7,10 +7,13 @@
 # 技术栈
     -Java
         --SpringCloud
-        --SpringCloudAlibaba
+        --SpringCloud Alibaba
+        --SpringCloud Gateway
+        --SpringCloud Sentinel
+        --SpringCloud Sleuth 
+        --Zipkin
         --SpringBoot
         --Nacos
-        --SpringCloud Gateway
         --Feign
         --Mybatis-Plus
         --WebSocket

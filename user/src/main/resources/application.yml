@@ -4,7 +4,34 @@ server:
 spring:
   application:
     name: api-user
+  zipkin:
+    base-url: ${ZIPKIN_SERVER_ADDR}
+  sleuth:
+    sampler:
+      probability: 1
   cloud:
     nacos:
       discovery:
         server-addr: ${NACOS_SERVER_ADDR}
+    sentinel:
+      # 取消控制台懒加载
+      eager: true
+      transport:
+        dashboard: ${SENTINEL_DASHBOARD_ADDR}
+        port:
+          8719
+      datasource:
+        ds1:
+          nacos:
+            server-addr: ${NACOS_SERVER_ADDR}
+            dataId: api-user-sentinel
+            groupId: DEFAULT_GROUP
+            data-type: json
+            rule-type: flow
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 5000
+        loggerLevel: basic
