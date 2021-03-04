@@ -1,5 +1,5 @@
 server:
-  port: 8021
+  port: ${API_WS_PORT}
 
 spring:
   application:

@@ -26,3 +26,7 @@ spring:
           uri: lb://api-websocket  #uri以lb://开头（lb代表从注册中心获取服务)
           predicates:
              - Path=/ws/**
+        - id: api_article_route #路由的ID，没有固定规则但要求唯一，建议配合服务名
+            uri: lb://api-article  #uri以lb://开头（lb代表从注册中心获取服务)
+            predicates:
+              - Path=/article/**

@@ -1,8 +1,8 @@
 package com.wczx.api.ws.filter;
 
-import com.wczx.api.response.WorkException;
-import com.wczx.api.response.WorkResponse;
-import com.wczx.api.response.WorkStatus;
+import com.wczx.api.common.response.WorkException;
+import com.wczx.api.common.response.WorkResponse;
+import com.wczx.api.common.response.WorkStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;

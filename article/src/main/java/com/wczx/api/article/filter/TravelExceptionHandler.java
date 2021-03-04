@@ -1,4 +1,4 @@
-package com.wczx.api.user.filter;
+package com.wczx.api.article.filter;
 
 import com.wczx.api.common.response.WorkException;
 import com.wczx.api.common.response.WorkResponse;
