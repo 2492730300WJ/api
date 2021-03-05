@@ -1,0 +1,40 @@
+server:
+  port: ${API_CACHE_PORT}
+
+spring:
+  application:
+    name: api-cache
+  redis:
+    host: ${REDIS_HOST}
+    port: ${REDIS_PORT}
+    timeout: ${REDIS_TIMEOUT}
+    password: ${REDIS_PASSWORD}
+    database: ${REDIS_DATABASE}
+    poolMaxTotal: ${REDIS_POOL_MAX_TOTAL}
+    poolMaxIdle: ${REDIS_POOL_MAX_IDLE}
+    poolMaxWait: ${REDIS_POOL_MAX_WAIT}
+  zipkin:
+    base-url: ${ZIPKIN_SERVER_ADDR}
+  sleuth:
+    sampler:
+      probability: 1
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_SERVER_ADDR}
+    sentinel:
+      # 取消控制台懒加载
+      eager: true
+      transport:
+        dashboard: ${SENTINEL_DASHBOARD_ADDR}
+        port:
+          8719
+      datasource:
+        ds1:
+          nacos:
+            server-addr: ${NACOS_SERVER_ADDR}
+            dataId: api-cache-sentinel
+            groupId: DEFAULT_GROUP
+            data-type: json
+            rule-type: flow
+

@@ -5,6 +5,7 @@
         --commons 公共类
         --ws      webSocket服务
         --article 文章服务
+        --cache   缓存服务
 # 技术栈
     -Java
         --SpringCloud
@@ -26,6 +27,7 @@
         --Mybatis-Plus
         --WebSocket
         --JWT
+        --redis
     -服务器
         --Docker
         --Jenkins

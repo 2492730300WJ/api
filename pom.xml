@@ -13,6 +13,7 @@
         <module>gateway</module>
         <module>ws</module>
         <module>article</module>
+        <module>cache</module>
     </modules>
     <packaging>pom</packaging>
 

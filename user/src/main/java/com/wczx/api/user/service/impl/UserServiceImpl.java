@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.wczx.api.common.dto.request.user.UserRequestDTO;
 import com.wczx.api.common.response.WorkException;
 import com.wczx.api.common.response.WorkStatus;
-import com.wczx.api.common.util.RedisUtil;
 import com.wczx.api.user.entity.User;
 import com.wczx.api.user.mapper.UserMapper;
 import com.wczx.api.user.service.UserService;
@@ -24,9 +23,6 @@ public class UserServiceImpl implements UserService {
 
     @Resource
     private UserMapper userMapper;
-
-    @Resource
-    RedisUtil redisUtil;
 
     @Override
     public Object login(UserRequestDTO userRequestDTO) {
