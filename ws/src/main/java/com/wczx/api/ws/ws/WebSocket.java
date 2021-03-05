@@ -1,10 +1,22 @@
 package com.wczx.api.ws.ws;
 
+import com.alibaba.fastjson.JSONObject;
+import com.wczx.api.common.constant.Constant;
+import com.wczx.api.common.dto.response.user.UserInfoResponseDTO;
+import com.wczx.api.common.response.WorkException;
+import com.wczx.api.common.response.WorkResponse;
+import com.wczx.api.common.response.WorkStatus;
+import com.wczx.api.common.util.TimeUtil;
+import com.wczx.api.ws.entity.PrivateMsg;
+import com.wczx.api.ws.feign.UserFeignClient;
+import com.wczx.api.ws.mapper.PrivateMsgMapper;
+import com.wczx.api.ws.ws.dto.CommonMsgRequestDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import javax.websocket.OnClose;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
@@ -27,12 +39,11 @@ import java.util.concurrent.ConcurrentHashMap;
 @ServerEndpoint("/websocket/{name}")
 public class WebSocket {
 
-//
-//    @Resource
-//    UserMapper userMapper;
-//
-//    @Resource
-//    PrivateMsgMapper privateMsgMapper;
+    @Resource
+    UserFeignClient userFeignClient;
+
+    @Resource
+    PrivateMsgMapper privateMsgMapper;
 
     private static WebSocket webSocket;
 
@@ -41,8 +52,8 @@ public class WebSocket {
     public void init() {
         webSocket = this;
         // 初使化时将已静态化的configParam实例化
-//        webSocket.userMapper = this.userMapper;
-//        webSocket.privateMsgMapper = this.privateMsgMapper;
+        webSocket.userFeignClient = this.userFeignClient;
+        webSocket.privateMsgMapper = this.privateMsgMapper;
     }
 
     /**
@@ -79,39 +90,43 @@ public class WebSocket {
 
     @OnMessage
     public void OnMessage(String message) {
-//        CommonMsgRequestDTO dto = JSONObject.parseObject(message, CommonMsgRequestDTO.class);
-//        log.info("[WebSocket] 收到消息：{}", message);
-//        // 私聊
-//        if (1 == dto.getMsgType()) {
-//            PrivateMsg privateMsg = new PrivateMsg();
-//            privateMsg.setFromUser(dto.getFromUser());
-//            privateMsg.setToUser(dto.getToUser());
-//            privateMsg.setMessage(dto.getMessage());
-//            privateMsg.setType(dto.getType());
-//            privateMsg.setIsDelete("N");
-//            privateMsg.setIsRead("N");
-//            privateMsg.setIsOld("N");
-//            privateMsg.setTime(TimeUtil.getNormalTime());
-//            webSocket.privateMsgMapper.insert(privateMsg);
-//            JSONObject fromMsg = JSONObject.parseObject(message);
-//            JSONObject toMsg = JSONObject.parseObject(message);
-//            UserInfoResponseDTO from = webSocket.userMapper.userInfo(dto.getFromUser());
-//            toMsg.put("isMy", "N");
-//            toMsg.put("avatar", from.getAvatar());
-//            toMsg.put("time", privateMsg.getTime());
-//            toMsg.put("id",privateMsg.getId());
-//            AppointSending(dto.getToUser().toString(), toMsg.toJSONString());
-//            fromMsg.put("isMy", "Y");
-//            fromMsg.put("avatar", from.getAvatar());
-//            fromMsg.put("id",privateMsg.getId());
-//            fromMsg.put("time", privateMsg.getTime());
-//            AppointSending(dto.getFromUser().toString(), fromMsg.toJSONString());
-//
-//        }
-//        // 群聊
-//        if (2 == dto.getMsgType()) {
-//            log.info("[WebSocket] 群聊开发中");
-//        }
+        CommonMsgRequestDTO dto = JSONObject.parseObject(message, CommonMsgRequestDTO.class);
+        log.info("[WebSocket] 收到消息：{}", message);
+        // 私聊
+        if (1 == dto.getMsgType()) {
+            PrivateMsg privateMsg = new PrivateMsg();
+            privateMsg.setFromUser(dto.getFromUser());
+            privateMsg.setToUser(dto.getToUser());
+            privateMsg.setMessage(dto.getMessage());
+            privateMsg.setType(dto.getType());
+            privateMsg.setIsDelete("N");
+            privateMsg.setIsRead("N");
+            privateMsg.setIsOld("N");
+            privateMsg.setTime(TimeUtil.getNormalTime());
+            webSocket.privateMsgMapper.insert(privateMsg);
+            JSONObject fromMsg = JSONObject.parseObject(message);
+            JSONObject toMsg = JSONObject.parseObject(message);
+            WorkResponse workResponse = webSocket.userFeignClient.infoIn(dto.getFromUser());
+            if (!WorkStatus.SUCCESS.equals(workResponse.getCode())){
+                throw new WorkException(WorkStatus.FAIL);
+            }
+            UserInfoResponseDTO from = JSONObject.parseObject((byte[]) workResponse.getData(),UserInfoResponseDTO.class);
+            toMsg.put("isMy", "N");
+            toMsg.put("avatar", from.getAvatar());
+            toMsg.put("time", privateMsg.getTime());
+            toMsg.put("id",privateMsg.getId());
+            AppointSending(dto.getToUser().toString(), toMsg.toJSONString());
+            fromMsg.put("isMy", "Y");
+            fromMsg.put("avatar", from.getAvatar());
+            fromMsg.put("id",privateMsg.getId());
+            fromMsg.put("time", privateMsg.getTime());
+            AppointSending(dto.getFromUser().toString(), fromMsg.toJSONString());
+
+        }
+        // 群聊
+        if (2 == dto.getMsgType()) {
+            log.info("[WebSocket] 群聊开发中");
+        }
 
     }
 

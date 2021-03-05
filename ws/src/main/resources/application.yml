@@ -4,6 +4,11 @@ server:
 spring:
   application:
     name: api-websocket
+  datasource:
+    url: ${DATASOURCE_WS_URL}
+    username: ${DATASOURCE_USERNAME}
+    password: ${DATASOURCE_PWD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
   zipkin:
     base-url: ${ZIPKIN_SERVER_ADDR}
   sleuth:
@@ -20,3 +25,13 @@ spring:
         dashboard: ${SENTINEL_DASHBOARD_ADDR}
         port:
           8719
+      datasource:
+        ds1:
+          nacos:
+            server-addr: ${NACOS_SERVER_ADDR}
+            dataId: api-ws-sentinel
+            groupId: DEFAULT_GROUP
+            data-type: json
+            rule-type: flow
+mybatis-plus:
+  mapper-locations: classpath:mapper/*.xml

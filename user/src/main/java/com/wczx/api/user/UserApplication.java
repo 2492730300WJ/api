@@ -12,7 +12,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableFeignClients
-@MapperScan()
+@MapperScan(basePackages = {"com.wczx.api.user.mapper"})
 public class UserApplication {
 
     public static void main(String[] args) {
