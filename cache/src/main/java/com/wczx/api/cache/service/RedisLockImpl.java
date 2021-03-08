@@ -10,7 +10,7 @@ import java.util.Collections;
 /**
  * Redis分布式锁
  *
- * @author banwo
+ * @author wj
  */
 @Service
 public class RedisLockImpl implements DLockApi {

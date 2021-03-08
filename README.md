@@ -11,7 +11,10 @@
         --SpringCloud
         --SpringBoot
         --SpringCloud Alibaba
-        
+        --SpringCloud Bus
+            消息总线
+        --SpringCloud Stream
+            消息驱动    
         --SpringCloud Gateway
             网关服务
         --SpringCloud Sentinel
@@ -22,7 +25,7 @@
             链路监控
         --Nacos
             服务注册，配置
-        --Feign
+        --OpenFeign
             服务之间调用
         --Mybatis-Plus
         --WebSocket
