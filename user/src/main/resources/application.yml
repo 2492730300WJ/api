@@ -41,3 +41,7 @@ feign:
         loggerLevel: basic
 mybatis-plus:
   mapper-locations: classpath:mapper/*.xml
+ribbon:
+  eager-load:
+    enabled: true
+    clients: api-auth,api-user,api-gateway,api-cache

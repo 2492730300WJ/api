@@ -1,0 +1,57 @@
+server:
+  port: ${API_MQ_PORT}
+spring:
+  rabbitmq:
+    host: ${MQ_HOST}
+    port: ${MQ_PORT}
+    username: ${MQ_USERNAME}
+    password: ${MQ_PASSWORD}
+    virtual-host: ${MQ_VIRTUAL_HOST}
+  application:
+    name: api-mq
+  zipkin:
+    base-url: ${ZIPKIN_SERVER_ADDR}
+  sleuth:
+    sampler:
+      probability: 1
+  cloud:
+#    stream:
+#      binders:
+#        defaultRabbit:
+#          type: rabbit
+#      bindings:
+#        output1:
+#          destination: text_exchange_1
+#          content-type: application/json
+#          binder: defaultRabbit
+#        output2:
+#          destination: text_exchange_2
+#          content-type: application/json
+#          binder: defaultRabbit
+#        output3:
+#          destination: text_exchange_3
+#          content-type: application/json
+#          binder: defaultRabbit
+#        input:
+#          destination: text_exchange
+#          content-type: application/json
+#          binder: defaultRabbit
+    nacos:
+      discovery:
+        server-addr: ${NACOS_SERVER_ADDR}
+    sentinel:
+      # 取消控制台懒加载
+      eager: true
+      transport:
+        dashboard: ${SENTINEL_DASHBOARD_ADDR}
+        port:
+          8719
+      datasource:
+        ds1:
+          nacos:
+            server-addr: ${NACOS_SERVER_ADDR}
+            dataId: api-mq-sentinel
+            groupId: DEFAULT_GROUP
+            data-type: json
+            rule-type: flow
+

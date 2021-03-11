@@ -1,8 +1,9 @@
 package com.wczx.api.cache.controller;
 
 import com.wczx.api.cache.service.DLockApi;
-import com.wczx.api.cache.service.KeyPrefix;
 import com.wczx.api.cache.service.RedisServiceApi;
+import com.wczx.api.common.dto.request.cache.CacheCommonRequestDTO;
+import com.wczx.api.common.dto.request.cache.LockCommonRequestDTO;
 import com.wczx.api.common.response.WorkResponse;
 import com.wczx.api.common.response.WorkStatus;
 import org.springframework.web.bind.annotation.*;
@@ -26,74 +27,73 @@ public class CacheController<T> {
     /**
      * lock
      */
-    @GetMapping("/lock")
-    public WorkResponse lock(String lockKey, String uniqueValue, int expireTime) {
-        return new WorkResponse(WorkStatus.SUCCESS, dLockApi.lock(lockKey, uniqueValue, expireTime));
+    @PostMapping("/lock")
+    public WorkResponse lock(@RequestBody LockCommonRequestDTO requestDTO) {
+        return new WorkResponse(WorkStatus.SUCCESS, dLockApi.lock(requestDTO.getLockKey(), requestDTO.getUniqueValue(), requestDTO.getExpireTime()));
     }
 
     /**
      * lock
      */
-    @GetMapping("/unlock")
-    public WorkResponse unlock(String lockKey, String uniqueValue) {
-        return new WorkResponse(WorkStatus.SUCCESS, dLockApi.unlock(lockKey, uniqueValue));
+    @PostMapping("/unlock")
+    public WorkResponse unlock(@RequestBody LockCommonRequestDTO requestDTO) {
+        return new WorkResponse(WorkStatus.SUCCESS, dLockApi.unlock(requestDTO.getLockKey(), requestDTO.getUniqueValue()));
     }
 
     /**
      * get
      */
-    @GetMapping("/get")
-    public WorkResponse get(KeyPrefix prefix, String key, Class<T> clazz) {
-        return new WorkResponse(WorkStatus.SUCCESS, redisServiceApi.get(prefix, key, clazz));
+    @PostMapping("/get")
+    public WorkResponse get(@RequestBody CacheCommonRequestDTO requestDTO) {
+        return new WorkResponse(WorkStatus.SUCCESS, redisServiceApi.get(requestDTO.getPrefix(), requestDTO.getKey()));
     }
 
     /**
      * set
      */
-    @GetMapping("/set")
-    public WorkResponse set(KeyPrefix prefix, String key, T value) {
-        return new WorkResponse(WorkStatus.SUCCESS, redisServiceApi.set(prefix, key, value));
+    @PostMapping("/set")
+    public WorkResponse set(@RequestBody CacheCommonRequestDTO requestDTO) {
+        return new WorkResponse(WorkStatus.SUCCESS, redisServiceApi.set(requestDTO.getPrefix(), requestDTO.getKey(), requestDTO.getExpireSeconds(), requestDTO.getValue()));
     }
 
     /**
      * setList
      */
-    @GetMapping("/set-list")
-    public WorkResponse setList(KeyPrefix prefix, String key, List<String> value) {
-        return new WorkResponse(WorkStatus.SUCCESS, redisServiceApi.setList(prefix, key, value));
+    @PostMapping("/set-list")
+    public WorkResponse setList(@RequestBody CacheCommonRequestDTO requestDTO) {
+        return new WorkResponse(WorkStatus.SUCCESS, redisServiceApi.setList(requestDTO.getPrefix(), requestDTO.getKey(), requestDTO.getExpireSeconds(), requestDTO.getListValue()));
     }
 
     /**
      * exists
      */
-    @GetMapping("/exists")
-    public WorkResponse exists(KeyPrefix keyPrefix, String key) {
-        return new WorkResponse(WorkStatus.SUCCESS, redisServiceApi.exists(keyPrefix, key));
+    @PostMapping("/exists")
+    public WorkResponse exists(@RequestBody CacheCommonRequestDTO requestDTO) {
+        return new WorkResponse(WorkStatus.SUCCESS, redisServiceApi.exists(requestDTO.getPrefix(), requestDTO.getKey()));
     }
 
     /**
      * incr
      */
-    @GetMapping("/incr")
-    public WorkResponse incr(KeyPrefix keyPrefix, String key) {
-        return new WorkResponse(WorkStatus.SUCCESS, redisServiceApi.incr(keyPrefix, key));
+    @PostMapping("/incr")
+    public WorkResponse incr(@RequestBody CacheCommonRequestDTO requestDTO) {
+        return new WorkResponse(WorkStatus.SUCCESS, redisServiceApi.incr(requestDTO.getPrefix(), requestDTO.getKey()));
     }
 
     /**
      * decr
      */
-    @GetMapping("/decr")
-    public WorkResponse decr(KeyPrefix keyPrefix, String key) {
-        return new WorkResponse(WorkStatus.SUCCESS, redisServiceApi.decr(keyPrefix, key));
+    @PostMapping("/decr")
+    public WorkResponse decr(@RequestBody CacheCommonRequestDTO requestDTO) {
+        return new WorkResponse(WorkStatus.SUCCESS, redisServiceApi.decr(requestDTO.getPrefix(), requestDTO.getKey()));
     }
 
     /**
      * delete
      */
-    @GetMapping("/delete")
-    public WorkResponse delete(KeyPrefix keyPrefix, String key) {
-        return new WorkResponse(WorkStatus.SUCCESS, redisServiceApi.delete(keyPrefix, key));
+    @PostMapping("/delete")
+    public WorkResponse delete(@RequestBody CacheCommonRequestDTO requestDTO) {
+        return new WorkResponse(WorkStatus.SUCCESS, redisServiceApi.delete(requestDTO.getPrefix(), requestDTO.getKey()));
     }
-
 
 }

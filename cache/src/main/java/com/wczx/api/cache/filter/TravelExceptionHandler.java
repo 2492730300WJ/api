@@ -24,8 +24,7 @@ public class TravelExceptionHandler {
     @ResponseBody
     public WorkResponse bizExceptionHandle(WorkException e) {
         e.printStackTrace();
-        WorkStatus workStatus = e.getWorkStatus();
-        WorkResponse response = new WorkResponse(workStatus);
+        WorkResponse response = new WorkResponse(e.getExceptionCode(),e.getExceptionMsg());
         return response;
     }
 

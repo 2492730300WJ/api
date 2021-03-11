@@ -19,15 +19,14 @@ public class WorkException extends RuntimeException {
      */
     private String exceptionMsg;
 
-    /**
-     * enum
-     */
-    private WorkStatus workStatus;
 
     public WorkException(WorkStatus workStatus){
-        super(workStatus.getWorkMsg());
-        this.workStatus = workStatus;
         this.exceptionCode = workStatus.getWorkCode();
         this.exceptionMsg = workStatus.getWorkMsg();
+    }
+
+    public WorkException(Integer exceptionCode,String exceptionMsg){
+        this.exceptionCode = exceptionCode;
+        this.exceptionMsg = exceptionMsg;
     }
 }

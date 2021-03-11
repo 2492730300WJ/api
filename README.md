@@ -6,6 +6,7 @@
         --ws      webSocket服务
         --article 文章服务
         --cache   缓存服务
+        --mq      消息服务
 # 技术栈
     -Java
         --SpringCloud
@@ -14,7 +15,7 @@
         --SpringCloud Bus
             消息总线
         --SpringCloud Stream
-            消息驱动    
+            消息驱动(直接使用rabbitMq更好)    
         --SpringCloud Gateway
             网关服务
         --SpringCloud Sentinel

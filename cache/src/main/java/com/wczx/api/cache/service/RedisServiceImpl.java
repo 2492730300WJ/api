@@ -1,17 +1,15 @@
 package com.wczx.api.cache.service;
 
-import com.alibaba.fastjson.JSON;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
  * redis服务实现
- *
- * @author banwo
+ * @author wj
  */
 @Service
 public class RedisServiceImpl implements RedisServiceApi {
@@ -19,23 +17,22 @@ public class RedisServiceImpl implements RedisServiceApi {
     /**
      * 通过连接池对象可以获得对redis的连接
      */
-    @Autowired
+    @Resource
     JedisPool jedisPool;
 
     @Override
-    public <T> T get(KeyPrefix prefix, String key, Class<T> clazz) {
+    public String get(String prefix, String key) {
         // redis连接
         Jedis jedis = null;
 
         try {
             jedis = jedisPool.getResource();
             // 生成真正的存储于redis中的key
-            String realKey = prefix.getPrefix() + key;
+            String realKey = prefix + key;
             // 通过key获取存储于redis中的对象（这个对象是以json格式存储的，所以是字符串）
             String strValue = jedis.get(realKey);
             // 将json字符串转换为对应的对象
-            T objValue = stringToBean(strValue, clazz);
-            return objValue;
+            return strValue;
         } finally {
             // 归还redis连接到连接池
             returnToPool(jedis);
@@ -43,28 +40,24 @@ public class RedisServiceImpl implements RedisServiceApi {
     }
 
     @Override
-    public <T> boolean set(KeyPrefix prefix, String key, T value) {
+    public boolean set(String prefix, String key, int expireSeconds, String value) {
         Jedis jedis = null;
         try {
             jedis = jedisPool.getResource();
-            // 将对象转换为json字符串
-            String strValue = beanToString(value);
-
-            if (strValue == null || strValue.length() <= 0) {
+            if (value == null) {
                 return false;
             }
-
             // 生成实际存储于redis中的key
-            String realKey = prefix.getPrefix() + key;
+            String realKey = prefix + key;
             // 获取key的过期时间
-            int expires = prefix.expireSeconds();
+            int expires = expireSeconds;
 
             if (expires <= 0) {
                 // 设置key的过期时间为redis默认值（由redis的缓存策略控制）
-                jedis.set(realKey, strValue);
+                jedis.set(realKey, value);
             } else {
                 // 设置key的过期时间
-                jedis.setex(realKey, expires, strValue);
+                jedis.setex(realKey, expires, value);
             }
             return true;
         } finally {
@@ -73,7 +66,7 @@ public class RedisServiceImpl implements RedisServiceApi {
     }
 
     @Override
-    public <T> boolean setList(KeyPrefix prefix, String key, List<String> value) {
+    public boolean setList(String prefix, String key, int expireSeconds, List<String> value) {
         Jedis jedis = null;
         try {
             jedis = jedisPool.getResource();
@@ -83,9 +76,9 @@ public class RedisServiceImpl implements RedisServiceApi {
             }
 
             // 生成实际存储于redis中的key
-            String realKey = prefix.getPrefix() + key;
+            String realKey = prefix + key;
             // 获取key的过期时间
-            int expires = prefix.expireSeconds();
+            int expires = expireSeconds;
 
             if (expires <= 0) {
                 // 设置key的过期时间为redis默认值（由redis的缓存策略控制）
@@ -101,11 +94,11 @@ public class RedisServiceImpl implements RedisServiceApi {
     }
 
     @Override
-    public boolean exists(KeyPrefix keyPrefix, String key) {
+    public boolean exists(String keyPrefix, String key) {
         Jedis jedis = null;
         try {
             jedis = jedisPool.getResource();
-            String realKey = keyPrefix.getPrefix() + key;
+            String realKey = keyPrefix + key;
             return jedis.exists(realKey);
         } finally {
             returnToPool(jedis);
@@ -113,11 +106,11 @@ public class RedisServiceImpl implements RedisServiceApi {
     }
 
     @Override
-    public long incr(KeyPrefix keyPrefix, String key) {
+    public long incr(String keyPrefix, String key) {
         Jedis jedis = null;
         try {
             jedis = jedisPool.getResource();
-            String realKey = keyPrefix.getPrefix() + key;
+            String realKey = keyPrefix + key;
             return jedis.incr(realKey);
         } finally {
             returnToPool(jedis);
@@ -125,11 +118,11 @@ public class RedisServiceImpl implements RedisServiceApi {
     }
 
     @Override
-    public long decr(KeyPrefix keyPrefix, String key) {
+    public long decr(String keyPrefix, String key) {
         Jedis jedis = null;
         try {
             jedis = jedisPool.getResource();
-            String realKey = keyPrefix.getPrefix() + key;
+            String realKey = keyPrefix + key;
             return jedis.decr(realKey);
         } finally {
             returnToPool(jedis);
@@ -137,11 +130,11 @@ public class RedisServiceImpl implements RedisServiceApi {
     }
 
     @Override
-    public boolean delete(KeyPrefix prefix, String key) {
+    public boolean delete(String prefix, String key) {
         Jedis jedis = null;
         try {
             jedis = jedisPool.getResource();
-            String realKey = prefix.getPrefix() + key;
+            String realKey = prefix + key;
             Long del = jedis.del(realKey);
             return del > 0;
         } finally {
@@ -149,64 +142,6 @@ public class RedisServiceImpl implements RedisServiceApi {
         }
     }
 
-    /**
-     * 将对象转换为对应的json字符串
-     *
-     * @param value 对象
-     * @param <T>   对象的类型
-     * @return 对象对应的json字符串
-     */
-    public static <T> String beanToString(T value) {
-        if (value == null) {
-            return null;
-        }
-
-        Class<?> clazz = value.getClass();
-        /*首先对基本类型处理*/
-        if (clazz == int.class || clazz == Integer.class) {
-            return "" + value;
-        } else if (clazz == long.class || clazz == Long.class) {
-            return "" + value;
-        } else if (clazz == String.class) {
-            return (String) value;
-        }
-            /*然后对Object类型的对象处理*/
-        else {
-            return JSON.toJSONString(value);
-        }
-    }
-
-    /**
-     * 根据传入的class参数，将json字符串转换为对应类型的对象
-     *
-     * @param strValue json字符串
-     * @param clazz    类型
-     * @param <T>      类型参数
-     * @return json字符串对应的对象
-     */
-    public static <T> T stringToBean(String strValue, Class<T> clazz) {
-
-        if ((strValue == null) || (strValue.length() <= 0) || (clazz == null)) {
-            return null;
-        }
-
-        // int or Integer
-        if ((clazz == int.class) || (clazz == Integer.class)) {
-            return (T) Integer.valueOf(strValue);
-        }
-            // long or Long
-        else if ((clazz == long.class) || (clazz == Long.class)) {
-            return (T) Long.valueOf(strValue);
-        }
-            // String
-        else if (clazz == String.class) {
-            return (T) strValue;
-        }
-            // 对象类型
-        else {
-            return JSON.toJavaObject(JSON.parseObject(strValue), clazz);
-        }
-    }
 
     /**
      * 将redis连接对象归还到redis连接池

@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * redis config class
- * @author banwo
+ * @author wj
  */
 @Component
 @ConfigurationProperties(prefix = "redis")

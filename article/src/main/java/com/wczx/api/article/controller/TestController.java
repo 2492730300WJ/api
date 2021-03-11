@@ -6,10 +6,10 @@ import com.wczx.api.common.blockhandler.BlockHandler;
 import com.wczx.api.common.response.CommonReturnController;
 import com.wczx.api.common.response.WorkResponse;
 import com.wczx.api.common.response.WorkStatus;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
 
@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 @RestController
 public class TestController extends CommonReturnController {
 
-    @Autowired
+    @Resource
     WsFeignClient wsFeignClient;
 
     @GetMapping("user/test")

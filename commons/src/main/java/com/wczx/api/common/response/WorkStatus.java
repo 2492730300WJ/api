@@ -7,13 +7,15 @@ import lombok.Getter;
  */
 @Getter
 public enum WorkStatus {
+    // 200 : auth and user
     SUCCESS(200, "请求成功"),
     FAIL(201,"系统出现异常"),
     PASSWORD_IS_ERROR(201,"用户名或密码错误"),
     THIS_ROLE_DO_NOT_LOGIN(203,"该角色无法登录此系统"),
     LOGIN_TIME_OUT(204,"登录已过期，请重新登录"),
     PLEASE_LOGIN(205,"请先登录您的账号"),
-    CHECK_PARAM(206,"请检查传入参数")
+    CHECK_PARAM(206,"请检查传入参数"),
+    AUTH_ERROR(207,"权限校验异常")
     ;
 
     /**
@@ -31,5 +33,11 @@ public enum WorkStatus {
         this.workMsg = workMsg;
     }
 
+    public void setWorkCode(Integer workCode) {
+        this.workCode = workCode;
+    }
 
+    public void setWorkMsg(String workMsg) {
+        this.workMsg = workMsg;
+    }
 }

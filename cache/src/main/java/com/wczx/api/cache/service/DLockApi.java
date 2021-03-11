@@ -3,7 +3,7 @@ package com.wczx.api.cache.service;
 /**
  * 分布式锁接口
  *
- * @author banwo
+ * @author wj
  */
 public interface DLockApi {
     /**

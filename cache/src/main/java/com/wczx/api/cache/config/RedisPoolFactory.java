@@ -1,18 +1,20 @@
 package com.wczx.api.cache.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
+import javax.annotation.Resource;
+
 /**
  * jedis连接池
+ * @author wj
  */
 @Component
 public class RedisPoolFactory {
 
-    @Autowired
+    @Resource
     RedisConfig redisConfig;
 
     @Bean

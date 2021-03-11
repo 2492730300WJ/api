@@ -56,4 +56,9 @@ public class WorkResponse {
         this.code = workStatus.getWorkCode();
         this.msg = workStatus.getWorkMsg();
     }
+
+    public WorkResponse(Integer code,String msg){
+        this.code = code;
+        this.msg = msg;
+    }
 }

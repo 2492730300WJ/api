@@ -37,4 +37,7 @@ spring:
             groupId: DEFAULT_GROUP
             data-type: json
             rule-type: flow
-
+ribbon:
+  eager-load:
+    enabled: true
+    clients: api-auth,api-user,api-gateway,api-cache

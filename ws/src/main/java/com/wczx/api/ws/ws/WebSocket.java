@@ -1,7 +1,6 @@
 package com.wczx.api.ws.ws;
 
 import com.alibaba.fastjson.JSONObject;
-import com.wczx.api.common.constant.Constant;
 import com.wczx.api.common.dto.response.user.UserInfoResponseDTO;
 import com.wczx.api.common.response.WorkException;
 import com.wczx.api.common.response.WorkResponse;
