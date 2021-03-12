@@ -69,11 +69,11 @@ public class UserServiceImpl implements UserService {
         CacheCommonRequestDTO requestDTO = new CacheCommonRequestDTO();
         requestDTO.setPrefix("token_");
         requestDTO.setKey(userInfo.getUserId().toString());
-        requestDTO.setExpireSeconds(86400);
+        requestDTO.setExpireSeconds(86400000);
         requestDTO.setValue(token);
         cacheClient.set(requestDTO);
         requestDTO.setPrefix("refreshToken_");
-        requestDTO.setExpireSeconds(604800);
+        requestDTO.setExpireSeconds(604800000);
         requestDTO.setValue(refreshToken);
         cacheClient.set(requestDTO);
         jsonObject.put("user", sessionInfo);

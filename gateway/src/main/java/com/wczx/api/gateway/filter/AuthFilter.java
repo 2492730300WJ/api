@@ -57,6 +57,10 @@ public class AuthFilter implements GlobalFilter, Ordered {
             if (null != whiteUrl && whiteUrl.contains(url)) {
                 return chain.filter(exchange);
             }
+            if (url.contains("/ws/websocket/")) {
+                System.out.println("socket跳出");
+                return chain.filter(exchange);
+            }
 
             // 获取权限校验部分
             String authHeader = exchange.getRequest().getHeaders().getFirst(GatewayConstant.AUTH_HEADER);

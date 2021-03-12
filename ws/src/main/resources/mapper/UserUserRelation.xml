@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wczx.api.ws.mapper.UserUserRelationMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.wczx.api.ws.entity.UserUserRelation">
+        <id column="id" property="id" />
+		<result column="user_id" property="userId" />
+		<result column="from_user" property="fromUser" />
+		<result column="remark" property="remark" />
+        <result column="status" property="status" />
+    </resultMap>
+
+    <select id="friendList" parameterType="java.lang.Long" resultType="com.wczx.api.common.dto.response.chat.FriendResponseDTO">
+        SELECT
+	        uur.from_user friendId,
+	        u.avatar avatar,
+	        u.user_name friendName,
+	        uur.remark remark
+        FROM
+            user_user_relation uur
+            LEFT JOIN `user`.USER u ON uur.from_user = u.user_id
+        WHERE
+            uur.user_id = #{userId}
+            and uur.`status` in (0,3)
+    </select>
+
+</mapper>

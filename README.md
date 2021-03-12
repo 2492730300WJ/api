@@ -7,6 +7,7 @@
         --article 文章服务
         --cache   缓存服务
         --mq      消息服务
+        --auth    鉴权服务
 # 技术栈
     -Java
         --SpringCloud

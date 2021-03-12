@@ -2,10 +2,8 @@ package com.wczx.api.feign.client;
 
 import com.wczx.api.common.dto.request.auth.AuthRequest;
 import com.wczx.api.common.response.WorkResponse;
-import com.wczx.api.common.response.WorkStatus;
 import com.wczx.api.common.session.SessionInfo;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 

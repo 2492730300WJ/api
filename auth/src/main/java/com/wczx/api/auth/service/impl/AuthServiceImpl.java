@@ -23,12 +23,14 @@ public class AuthServiceImpl implements AuthService {
     public Object auth(AuthRequest request) {
         // 从 http 请求头中取出 token
         String token = request.getToken();
+        System.out.println(token);
         // 执行认证 先校验短token
         // 注意：如果jwt已经过期了，这里会抛出jwt过期异常
         try {
             Claims c = tokenServiceImpl.parseJWT(token);
             System.out.println(c.getSubject());
         } catch (Exception e) {
+            e.printStackTrace();
             // 通过短Token查询长Token
             throw new WorkException(WorkStatus.LOGIN_TIME_OUT);
         }

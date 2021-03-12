@@ -4,10 +4,7 @@ import com.wczx.api.common.dto.request.user.UserRequestDTO;
 import com.wczx.api.common.response.WorkResponse;
 import com.wczx.api.common.response.WorkStatus;
 import com.wczx.api.user.service.UserService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -42,8 +39,8 @@ public class UserController {
      * 用户信息(内部服务调用)
      */
     @PostMapping("/info-in")
-    public WorkResponse infoIn(Long fromUser) {
-        return new WorkResponse(WorkStatus.SUCCESS, userService.userIn(fromUser));
+    public WorkResponse infoIn(@RequestBody UserRequestDTO userRequestDTO) {
+        return new WorkResponse(WorkStatus.SUCCESS, userService.userIn(userRequestDTO.getUserId()));
     }
 
 }

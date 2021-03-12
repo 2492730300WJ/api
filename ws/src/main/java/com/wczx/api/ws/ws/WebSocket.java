@@ -1,17 +1,19 @@
 package com.wczx.api.ws.ws;
 
 import com.alibaba.fastjson.JSONObject;
+import com.wczx.api.common.dto.request.user.UserRequestDTO;
 import com.wczx.api.common.dto.response.user.UserInfoResponseDTO;
 import com.wczx.api.common.response.WorkException;
 import com.wczx.api.common.response.WorkResponse;
 import com.wczx.api.common.response.WorkStatus;
 import com.wczx.api.common.util.TimeUtil;
+import com.wczx.api.feign.client.UserClient;
 import com.wczx.api.ws.entity.PrivateMsg;
-import com.wczx.api.ws.feign.UserFeignClient;
 import com.wczx.api.ws.mapper.PrivateMsgMapper;
 import com.wczx.api.ws.ws.dto.CommonMsgRequestDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestBody;
 
 
 import javax.annotation.PostConstruct;
@@ -35,11 +37,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Component
-@ServerEndpoint("/websocket/{name}")
+@ServerEndpoint("/ws/websocket/{name}")
 public class WebSocket {
 
     @Resource
-    UserFeignClient userFeignClient;
+    UserClient userClient;
 
     @Resource
     PrivateMsgMapper privateMsgMapper;
@@ -51,7 +53,7 @@ public class WebSocket {
     public void init() {
         webSocket = this;
         // 初使化时将已静态化的configParam实例化
-        webSocket.userFeignClient = this.userFeignClient;
+        webSocket.userClient = this.userClient;
         webSocket.privateMsgMapper = this.privateMsgMapper;
     }
 
@@ -105,11 +107,14 @@ public class WebSocket {
             webSocket.privateMsgMapper.insert(privateMsg);
             JSONObject fromMsg = JSONObject.parseObject(message);
             JSONObject toMsg = JSONObject.parseObject(message);
-            WorkResponse workResponse = webSocket.userFeignClient.infoIn(dto.getFromUser());
-            if (!WorkStatus.SUCCESS.equals(workResponse.getCode())){
+            UserRequestDTO userRequestDTO = new UserRequestDTO();
+            userRequestDTO.setUserId(dto.getFromUser());
+            WorkResponse workResponse = webSocket.userClient.infoIn(userRequestDTO);
+            if (!WorkStatus.SUCCESS.getWorkCode().equals(workResponse.getCode())){
                 throw new WorkException(WorkStatus.FAIL);
             }
-            UserInfoResponseDTO from = JSONObject.parseObject((byte[]) workResponse.getData(),UserInfoResponseDTO.class);
+            String fromString = JSONObject.toJSONString(workResponse.getData());
+            UserInfoResponseDTO from = JSONObject.parseObject(fromString,UserInfoResponseDTO.class);
             toMsg.put("isMy", "N");
             toMsg.put("avatar", from.getAvatar());
             toMsg.put("time", privateMsg.getTime());
@@ -156,7 +161,6 @@ public class WebSocket {
             log.info("[WebSocket] 发送私聊成功");
         } catch (Exception e) {
             log.info("[WebSocket] 不在线 ");
-            e.printStackTrace();
         }
     }
 }

@@ -14,7 +14,7 @@
             u.avatar avatar
         FROM
             private_msg pm
-            LEFT JOIN user u ON pm.from_user = u.user_id
+            LEFT JOIN `user`.user u ON pm.from_user = u.user_id
         WHERE
             ( pm.from_user = #{fromUser} AND pm.to_user = #{toUser} )
             OR ( pm.from_user = #{toUser} AND pm.to_user = #{fromUser} )
