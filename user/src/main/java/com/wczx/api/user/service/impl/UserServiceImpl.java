@@ -13,7 +13,6 @@ import com.wczx.api.user.entity.User;
 import com.wczx.api.user.mapper.UserMapper;
 import com.wczx.api.user.service.UserService;
 import org.apache.commons.lang.StringUtils;
-import org.checkerframework.checker.units.qual.C;
 import org.springframework.stereotype.Service;
 import com.wczx.api.common.dto.response.user.UserInfoResponseDTO;
 
@@ -69,11 +68,11 @@ public class UserServiceImpl implements UserService {
         CacheCommonRequestDTO requestDTO = new CacheCommonRequestDTO();
         requestDTO.setPrefix("token_");
         requestDTO.setKey(userInfo.getUserId().toString());
-        requestDTO.setExpireSeconds(86400000);
+        requestDTO.setExpireSeconds(86400);
         requestDTO.setValue(token);
         cacheClient.set(requestDTO);
         requestDTO.setPrefix("refreshToken_");
-        requestDTO.setExpireSeconds(604800000);
+        requestDTO.setExpireSeconds(604800);
         requestDTO.setValue(refreshToken);
         cacheClient.set(requestDTO);
         jsonObject.put("user", sessionInfo);
