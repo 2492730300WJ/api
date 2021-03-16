@@ -17,6 +17,7 @@
         <module>mq</module>
         <module>auth</module>
         <module>feign</module>
+        <module>schedule</module>
     </modules>
     <packaging>pom</packaging>
 

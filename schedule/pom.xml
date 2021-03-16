@@ -9,21 +9,9 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>article</artifactId>
+    <artifactId>schedule</artifactId>
 
     <dependencies>
-        <!-- mybatisplus与springboot整合 -->
-        <dependency>
-            <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-boot-starter</artifactId>
-        </dependency>
-        <!--mysql-->
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <scope>runtime</scope>
-            <version>8.0.11</version>
-        </dependency>
         <!-- zipkin -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -37,11 +25,6 @@
         <dependency>
             <groupId>com.wczx.api</groupId>
             <artifactId>commons</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.wczx.api</groupId>
-            <artifactId>feign</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
