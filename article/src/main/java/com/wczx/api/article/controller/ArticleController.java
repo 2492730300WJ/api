@@ -1,9 +1,12 @@
 package com.wczx.api.article.controller;
 
 import com.wczx.api.article.service.ArticleService;
+import com.wczx.api.common.dto.request.cache.CacheCommonRequestDTO;
 import com.wczx.api.common.dto.request.user.UserRequestDTO;
+import com.wczx.api.common.response.WorkException;
 import com.wczx.api.common.response.WorkResponse;
 import com.wczx.api.common.response.WorkStatus;
+import com.wczx.api.feign.client.CacheClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,8 +21,25 @@ import javax.annotation.Resource;
 @RequestMapping("article")
 public class ArticleController {
 
+    /*
+    Redis Value
+    {
+        "title": "文章标题",
+        "content": "文章内容",
+        "stat": 1,
+        "fork": 1，
+        "watch":1,
+        "articleId":1,
+        "createTime":"2021-01-01 11:11:11",
+        "updateTime":"2021-01-01 12:12:12"
+    }
+     */
+
     @Resource
     ArticleService articleService;
+
+    @Resource
+    CacheClient cacheClient;
 
     /**
      * 获取文章详情
@@ -28,6 +48,18 @@ public class ArticleController {
      */
     @PostMapping("/get")
     public WorkResponse getArticle(@RequestBody UserRequestDTO userRequestDTO) {
+        CacheCommonRequestDTO commonRequestDTO = new CacheCommonRequestDTO();
+        commonRequestDTO.setPrefix("article_");
+        commonRequestDTO.setKey("1");
+        WorkResponse cache = cacheClient.get(commonRequestDTO);
+        if (!WorkStatus.SUCCESS.getWorkCode().equals(cache.getCode())){
+            throw new WorkException(WorkStatus.FAIL);
+        }
+        commonRequestDTO.setValue("1");
+        if(null != cache.getData()){
+            commonRequestDTO.setValue((Integer.valueOf(cache.getData().toString()) + 1 ) + "");
+        }
+        cacheClient.set(commonRequestDTO);
         return new WorkResponse(WorkStatus.SUCCESS, null);
     }
 
@@ -38,7 +70,7 @@ public class ArticleController {
      * 3.通过消息服务发送消息给好友附带跳转链接
      */
     @PostMapping("/save")
-    public WorkResponse login(@RequestBody UserRequestDTO userRequestDTO) {
+    public WorkResponse saveArticle(@RequestBody UserRequestDTO userRequestDTO) {
         return new WorkResponse(WorkStatus.SUCCESS, null);
     }
 
@@ -49,7 +81,7 @@ public class ArticleController {
      * 3.通过定时任务每小时存入一次MYSQL数据库主要修改浏览数
      */
     @PostMapping("/update")
-    public WorkResponse update(@RequestBody UserRequestDTO userRequestDTO) {
+    public WorkResponse updateArticle(@RequestBody UserRequestDTO userRequestDTO) {
         return new WorkResponse(WorkStatus.SUCCESS, null);
     }
 
@@ -61,7 +93,7 @@ public class ArticleController {
      * 大概格式 ：xx 在 time 点赞了 您的 xxx文章
      */
     @PostMapping("/star")
-    public WorkResponse star(@RequestBody UserRequestDTO userRequestDTO) {
+    public WorkResponse starArticle(@RequestBody UserRequestDTO userRequestDTO) {
         return new WorkResponse(WorkStatus.SUCCESS, null);
     }
 
@@ -71,7 +103,7 @@ public class ArticleController {
      * 2.存入缓存or修改缓存
      */
     @PostMapping("/no-star")
-    public WorkResponse noStar(@RequestBody UserRequestDTO userRequestDTO) {
+    public WorkResponse noStarArticle(@RequestBody UserRequestDTO userRequestDTO) {
         return new WorkResponse(WorkStatus.SUCCESS, null);
     }
 
@@ -82,7 +114,7 @@ public class ArticleController {
      * 3.通过消息服务发送消息给需要分享好友附带跳转链接
      */
     @PostMapping("/fork")
-    public WorkResponse fork(@RequestBody UserRequestDTO userRequestDTO) {
+    public WorkResponse forkArticle(@RequestBody UserRequestDTO userRequestDTO) {
         return new WorkResponse(WorkStatus.SUCCESS, null);
     }
 
@@ -93,7 +125,7 @@ public class ArticleController {
      * 大概格式 ：xx 在 time 评论了 您的 xxx文章 评论内容 ：xxx
      */
     @PostMapping("/comment")
-    public WorkResponse comment(@RequestBody UserRequestDTO userRequestDTO) {
+    public WorkResponse commentArticle(@RequestBody UserRequestDTO userRequestDTO) {
         return new WorkResponse(WorkStatus.SUCCESS, null);
     }
 
@@ -104,7 +136,7 @@ public class ArticleController {
      * 大概格式 ：xx 在 time 回复了 您在 xxx文章下的消息 消息内容 ：xxx 回复内容：xxx
      */
     @PostMapping("/reply")
-    public WorkResponse reply(@RequestBody UserRequestDTO userRequestDTO) {
+    public WorkResponse replyComment(@RequestBody UserRequestDTO userRequestDTO) {
         return new WorkResponse(WorkStatus.SUCCESS, null);
     }
 }

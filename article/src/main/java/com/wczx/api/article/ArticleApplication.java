@@ -10,7 +10,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
  */
 @SpringBootApplication
 @EnableDiscoveryClient
-@EnableFeignClients
+@EnableFeignClients(basePackages = {"com.wczx.api.feign.client"})
 public class ArticleApplication {
 
     public static void main(String[] args) {

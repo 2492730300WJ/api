@@ -1,3 +1,7 @@
+# 简介
+此项目为[Confetti](https://github.com/2492730300WJ/Confetti)的后台接口，提供了一系列api以供app使用，项目主要用到了SpringCloud Alibaba及其相关组件构成后台核心架构。
+
+---
 # 基本结构
 ## api
         gateway  统一网关
@@ -11,6 +15,7 @@
 ## 公共包
         feign    FeignClient  
         commons  dto ，constant
+ ---
 # 技术栈
     -Java
         --SpringCloud
@@ -40,8 +45,8 @@
         --Docker
         --Jenkins
 # 所需组件
-    Nacos：
-        前往官网下载nacos服务端
+##   Nacos
+     	前往官网下载nacos服务端
         默认端口8848
         持久化须知：
             1.创建数据库和表 sql位置：安装目录/nacos/conf/nacos-mysql.sql
@@ -60,7 +65,7 @@
                     改为：
                     rem set MODE="cluster"
                     set MODE="standalone"
-    Sentinal:
+## Sentinal
         前往官网下载sentinel-dashboard-1.8.1.jar
         默认端口8080
         启动：java -jar sentinel-dashboard-1.8.1.jar
@@ -80,7 +85,9 @@
                         groupId: xxx
                         data-type: json
                         rule-type: flow
-    SpringCloud Sleuth && Zipkin:
+##  SpringCloud Sleuth && Zipkin
         前往官网下载zipkin-server-2.12.9-exec.jar
         默认端口9411
         启动：java -jar zipkin-server-2.12.9-exec.jar
+# 链路
+![链路图](http://47.102.121.70/file/zipkin.png)
