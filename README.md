@@ -4,17 +4,17 @@
 ---
 # 基本结构
 ## api
-        gateway  统一网关
-        user     用户服务
-        ws       聊天服务
-        article  文章服务
-        cache    缓存服务
-        mq       消息服务
-        auth     鉴权服务
-        schedule 定时服务
+ -  [gateway 统一网关](https://github.com/2492730300WJ/api/tree/master/gateway/README.md)
+ -  user     用户服务
+ -  [ws 聊天服务](https://github.com/2492730300WJ/api/blob/master/ws/README.md)
+ -  [article 文章服务](https://github.com/2492730300WJ/api/tree/master/article/README.md)
+ -  cache    缓存服务
+ -  mq       消息服务
+ -  auth     鉴权服务
+ -  schedule 定时服务
 ## 公共包
-        feign    FeignClient  
-        commons  dto ，constant
+ -         feign    FeignClient  
+ -         commons  dto ，constant
  ---
 # 技术栈
     -Java

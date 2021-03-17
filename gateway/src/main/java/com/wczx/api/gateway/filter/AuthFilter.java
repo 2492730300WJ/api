@@ -8,8 +8,6 @@ import com.wczx.api.common.response.WorkStatus;
 import com.wczx.api.feign.client.AuthClient;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.NumberUtils;
-import org.slf4j.MDC;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
@@ -22,7 +20,6 @@ import reactor.core.publisher.Mono;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * 权限校验
@@ -75,8 +72,11 @@ public class AuthFilter implements GlobalFilter, Ordered {
             if (!workResponse.getCode().equals(WorkStatus.SUCCESS.getWorkCode())) {
                 throw new WorkException(workResponse.getCode(), workResponse.getMsg());
             }
+            ServerHttpRequest.Builder mutate = exchange.getRequest().mutate();
+            mutate.header("jwtjwt", authHeader);
+            ServerHttpRequest buildRequest = mutate.build();
             log.info("MDC END");
-            return chain.filter(exchange);
+            return chain.filter(exchange.mutate().request(buildRequest).build());
         } catch (WorkException w) {
             ServerHttpRequest newRequest = request.mutate()
                     .path("/auth-error?code=" + w.getExceptionCode() + "&message=" + w.getExceptionMsg())

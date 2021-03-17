@@ -1,6 +1,7 @@
 package com.wczx.api.user.filter;
 
 import com.alibaba.fastjson.JSON;
+import com.wczx.api.common.constant.GatewayConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -38,7 +39,6 @@ public class TravelRequestContextFilter implements Filter {
 //        response.addHeader("Access-Control-Allow-Headers", "Content-Type,token,refreshToken");
 //        response.addHeader("Access-Control-Max-Age", "3600");
 //        response.setCharacterEncoding("UTF-8");
-
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         Map<String, Object> params = new HashMap<>(10);
         params.put("requestUrl", request.getRequestURI());
