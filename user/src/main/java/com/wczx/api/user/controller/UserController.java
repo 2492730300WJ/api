@@ -1,8 +1,6 @@
 package com.wczx.api.user.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.wczx.api.common.constant.AuthConstant;
-import com.wczx.api.common.constant.GatewayConstant;
 import com.wczx.api.common.dto.request.user.UserRequestDTO;
 import com.wczx.api.common.response.WorkResponse;
 import com.wczx.api.common.response.WorkStatus;
