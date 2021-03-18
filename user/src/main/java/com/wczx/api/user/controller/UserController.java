@@ -9,7 +9,6 @@ import com.wczx.api.user.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author Administrator
@@ -25,7 +24,7 @@ public class UserController {
      * 登录
      */
     @PostMapping("/login")
-    public WorkResponse login(HttpServletRequest request, @RequestBody UserRequestDTO userRequestDTO) {
+    public WorkResponse login(@RequestBody UserRequestDTO userRequestDTO) {
         return new WorkResponse(WorkStatus.SUCCESS, userService.login(userRequestDTO));
     }
 

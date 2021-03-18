@@ -1,5 +1,27 @@
 # 简介
 此项目为[Confetti](https://github.com/2492730300WJ/Confetti)的后台接口，提供了一系列api以供app使用，项目主要用到了SpringCloud Alibaba及其相关组件构成后台核心架构。
+<p align="center">
+  <a>
+    <img src="https://img.shields.io/badge/JDK-1.8-red">
+  </a>
+  <a>
+    <img src="https://img.shields.io/badge/SpringCloud-Hoxton.SR8-green">
+  </a>
+  <a>
+     <img src="https://img.shields.io/badge/SpringCloud%20Alibaba-2.2.5.RELEASE-brightgreen">
+  </a>
+  <a>
+     <img src="https://img.shields.io/badge/SpringBoot-2.3.2.RELEASE-yellow">
+  </a>
+  <a>
+     <img src="https://img.shields.io/badge/Mybatis--Plus-3.4.2-blue">
+  </a>
+  <a>
+      <img src="https://img.shields.io/badge/Nacos-1.4.1-green">
+  </a>
+</p>
+
+简体中文 | [English](./README.en.md)
 
 ---
 # 基本结构
