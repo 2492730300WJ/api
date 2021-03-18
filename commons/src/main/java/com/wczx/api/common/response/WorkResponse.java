@@ -27,11 +27,6 @@ public class WorkResponse {
      * JSONObject
      */
     private Object data;
-
-    /**
-     * 操作ID
-     */
-    private String operatingId = MDC.get("operatingId");
     /**
      * enum
      */

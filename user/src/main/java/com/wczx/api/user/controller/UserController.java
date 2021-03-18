@@ -1,10 +1,12 @@
 package com.wczx.api.user.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.wczx.api.common.constant.AuthConstant;
 import com.wczx.api.common.constant.GatewayConstant;
 import com.wczx.api.common.dto.request.user.UserRequestDTO;
 import com.wczx.api.common.response.WorkResponse;
 import com.wczx.api.common.response.WorkStatus;
+import com.wczx.api.common.session.SessionInfo;
 import com.wczx.api.user.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,8 +35,11 @@ public class UserController {
      * 用户信息
      */
     @PostMapping("/info")
-    public WorkResponse info(@RequestBody UserRequestDTO userRequestDTO) {
-       return new WorkResponse(WorkStatus.SUCCESS, userService.info(userRequestDTO));
+    public WorkResponse info(@RequestHeader("sessionInfo") String sessionInfo) {
+        SessionInfo info = JSONObject.parseObject(sessionInfo, SessionInfo.class);
+        UserRequestDTO userRequestDTO = new UserRequestDTO();
+        userRequestDTO.setUserId(info.getUserId());
+        return new WorkResponse(WorkStatus.SUCCESS, userService.info(userRequestDTO));
     }
 
     /**

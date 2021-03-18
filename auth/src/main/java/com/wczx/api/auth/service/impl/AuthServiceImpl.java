@@ -24,17 +24,19 @@ public class AuthServiceImpl implements AuthService {
         // 从 http 请求头中取出 token
         String token = request.getToken();
         System.out.println(token);
+        String object = null;
         // 执行认证 先校验短token
         // 注意：如果jwt已经过期了，这里会抛出jwt过期异常
         try {
             Claims c = tokenServiceImpl.parseJWT(token);
+            object = c.getSubject();
             System.out.println(c.getSubject());
         } catch (Exception e) {
             e.printStackTrace();
             // 通过短Token查询长Token
             throw new WorkException(WorkStatus.LOGIN_TIME_OUT);
         }
-        return true;
+        return object;
 //        ApiDTO apiDTO = baseService.getApiByUrlAndMethod(url,httpMethod);
 //        if(apiDTO == null){
 //            result.setStatus(ErrorCode.DATA_NULL);

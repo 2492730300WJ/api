@@ -1,25 +1,38 @@
 package com.wczx.api.gateway.filter;
 
+import com.alibaba.fastjson.JSON;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wczx.api.common.constant.GatewayConstant;
 import com.wczx.api.common.dto.request.auth.AuthRequest;
 import com.wczx.api.common.response.WorkException;
 import com.wczx.api.common.response.WorkResponse;
 import com.wczx.api.common.response.WorkStatus;
 import com.wczx.api.feign.client.AuthClient;
+import io.netty.buffer.ByteBufAllocator;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.MDC;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
-import org.springframework.http.HttpMethod;
+import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.core.io.buffer.DataBufferUtils;
+import org.springframework.core.io.buffer.NettyDataBufferFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.http.server.reactive.ServerHttpRequestDecorator;
+import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.List;
+import java.net.URI;
+import java.nio.CharBuffer;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * 权限校验
@@ -33,23 +46,21 @@ public class AuthFilter implements GlobalFilter, Ordered {
     @Resource
     private AuthClient authClient;
 
-
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-//        MDC.put("operatingId", String.valueOf(UUID.randomUUID()));
-        log.info("MDC ADD");
         String url = exchange.getRequest().getURI().getPath();
         ServerHttpRequest request = exchange.getRequest();
+        ServerHttpResponse response = exchange.getResponse();
         try {
-            log.info(" access url :  " + url);
             String scheme = exchange.getRequest().getURI().getScheme();
             String host = exchange.getRequest().getURI().getHost();
             int port = exchange.getRequest().getURI().getPort();
             String basePath = scheme + "://" + host + ":" + port;
-            log.info(" base path :  " + basePath);
 
             List<String> whiteUrl = new ArrayList<>();
             whiteUrl.add("/user/login");
+
+            log.info("request filter:" + basePath + url);
             //跳过白名单
             if (null != whiteUrl && whiteUrl.contains(url)) {
                 return chain.filter(exchange);
@@ -62,7 +73,7 @@ public class AuthFilter implements GlobalFilter, Ordered {
             // 获取权限校验部分
             String authHeader = exchange.getRequest().getHeaders().getFirst(GatewayConstant.AUTH_HEADER);
             if (StringUtils.isBlank(authHeader)) {
-                throw new WorkException(WorkStatus.CHECK_PARAM);
+                throw new WorkException(WorkStatus.AUTH_ERROR);
             }
             AuthRequest authRequest = new AuthRequest();
             authRequest.setToken(authHeader);
@@ -73,19 +84,31 @@ public class AuthFilter implements GlobalFilter, Ordered {
                 throw new WorkException(workResponse.getCode(), workResponse.getMsg());
             }
             ServerHttpRequest.Builder mutate = exchange.getRequest().mutate();
-            mutate.header("jwtjwt", authHeader);
+            mutate.header("sessionInfo", workResponse.getData().toString());
             ServerHttpRequest buildRequest = mutate.build();
-            log.info("MDC END");
             return chain.filter(exchange.mutate().request(buildRequest).build());
         } catch (WorkException w) {
-            ServerHttpRequest newRequest = request.mutate()
-                    .path("/auth-error?code=" + w.getExceptionCode() + "&message=" + w.getExceptionMsg())
-                    .method(HttpMethod.GET)
-                    .build();
-            log.info("MDC END");
-            return chain.filter(exchange.mutate()
-                    .request(newRequest).build());
+            return authError(response, w);
         }
+    }
+
+    /**
+     * 权限异常
+     * @return
+     */
+    private Mono<Void> authError(ServerHttpResponse resp, WorkException w) {
+        resp.setStatusCode(HttpStatus.OK);
+        resp.getHeaders().add("Content-Type", "application/json;charset=UTF-8");
+        WorkResponse returnData = new WorkResponse(w.getExceptionCode(), w.getExceptionMsg());
+        String returnStr = null;
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            returnStr = objectMapper.writeValueAsString(returnData);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        DataBuffer buffer = resp.bufferFactory().wrap(returnStr.getBytes(StandardCharsets.UTF_8));
+        return resp.writeWith(Flux.just(buffer));
     }
 
     @Override

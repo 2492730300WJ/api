@@ -32,13 +32,6 @@ public class TravelRequestContextFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-//        HttpServletResponse response = (HttpServletResponse) servletResponse;
-//        response.addHeader("Access-Control-Allow-Origin", "*");
-//        response.addHeader("Access-Control-Allow-Credentials", "true");
-//        response.addHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT, HEAD");
-//        response.addHeader("Access-Control-Allow-Headers", "Content-Type,token,refreshToken");
-//        response.addHeader("Access-Control-Max-Age", "3600");
-//        response.setCharacterEncoding("UTF-8");
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         Map<String, Object> params = new HashMap<>(10);
         params.put("requestUrl", request.getRequestURI());
