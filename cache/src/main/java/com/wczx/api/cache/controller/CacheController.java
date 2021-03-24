@@ -45,7 +45,7 @@ public class CacheController<T> {
      */
     @PostMapping("/get")
     public WorkResponse get(@RequestBody CacheCommonRequestDTO requestDTO) {
-        return new WorkResponse(WorkStatus.SUCCESS, redisServiceApi.get(requestDTO.getPrefix(), requestDTO.getKey()));
+        return new WorkResponse(WorkStatus.SUCCESS, redisServiceApi.get(requestDTO.getKey()));
     }
 
     /**
@@ -55,8 +55,8 @@ public class CacheController<T> {
     public WorkResponse set(@RequestBody CacheCommonRequestDTO requestDTO) {
         if (null == requestDTO.getExpireSeconds()) {
             requestDTO.setExpireSeconds(0);
-    }
-        return new WorkResponse(WorkStatus.SUCCESS, redisServiceApi.set(requestDTO.getPrefix(), requestDTO.getKey(), requestDTO.getExpireSeconds(), requestDTO.getValue()));
+        }
+        return new WorkResponse(WorkStatus.SUCCESS, redisServiceApi.set(requestDTO.getKey(), requestDTO.getExpireSeconds(), requestDTO.getValue()));
     }
 
     /**
@@ -64,7 +64,7 @@ public class CacheController<T> {
      */
     @PostMapping("/set-list")
     public WorkResponse setList(@RequestBody CacheCommonRequestDTO requestDTO) {
-        return new WorkResponse(WorkStatus.SUCCESS, redisServiceApi.setList(requestDTO.getPrefix(), requestDTO.getKey(), requestDTO.getExpireSeconds(), requestDTO.getListValue()));
+        return new WorkResponse(WorkStatus.SUCCESS, redisServiceApi.setList(requestDTO.getKey(), requestDTO.getExpireSeconds(), requestDTO.getListValue()));
     }
 
     /**
@@ -72,7 +72,7 @@ public class CacheController<T> {
      */
     @PostMapping("/exists")
     public WorkResponse exists(@RequestBody CacheCommonRequestDTO requestDTO) {
-        return new WorkResponse(WorkStatus.SUCCESS, redisServiceApi.exists(requestDTO.getPrefix(), requestDTO.getKey()));
+        return new WorkResponse(WorkStatus.SUCCESS, redisServiceApi.exists(requestDTO.getKey()));
     }
 
     /**
@@ -80,7 +80,7 @@ public class CacheController<T> {
      */
     @PostMapping("/incr")
     public WorkResponse incr(@RequestBody CacheCommonRequestDTO requestDTO) {
-        return new WorkResponse(WorkStatus.SUCCESS, redisServiceApi.incr(requestDTO.getPrefix(), requestDTO.getKey()));
+        return new WorkResponse(WorkStatus.SUCCESS, redisServiceApi.incr(requestDTO.getKey()));
     }
 
     /**
@@ -88,7 +88,7 @@ public class CacheController<T> {
      */
     @PostMapping("/decr")
     public WorkResponse decr(@RequestBody CacheCommonRequestDTO requestDTO) {
-        return new WorkResponse(WorkStatus.SUCCESS, redisServiceApi.decr(requestDTO.getPrefix(), requestDTO.getKey()));
+        return new WorkResponse(WorkStatus.SUCCESS, redisServiceApi.decr(requestDTO.getKey()));
     }
 
     /**
@@ -96,7 +96,23 @@ public class CacheController<T> {
      */
     @PostMapping("/delete")
     public WorkResponse delete(@RequestBody CacheCommonRequestDTO requestDTO) {
-        return new WorkResponse(WorkStatus.SUCCESS, redisServiceApi.delete(requestDTO.getPrefix(), requestDTO.getKey()));
+        return new WorkResponse(WorkStatus.SUCCESS, redisServiceApi.delete(requestDTO.getKey()));
     }
 
+
+    /**
+     * set bit
+     */
+    @PostMapping("/set-bit")
+    public WorkResponse setBit(@RequestBody CacheCommonRequestDTO requestDTO) {
+        return new WorkResponse(WorkStatus.SUCCESS, redisServiceApi.setBit(requestDTO.getKey(), requestDTO.getValue(), requestDTO.getOffset()));
+    }
+
+    /**
+     * get bit
+     */
+    @PostMapping("/get-bit")
+    public WorkResponse getBit(@RequestBody CacheCommonRequestDTO requestDTO) {
+        return new WorkResponse(WorkStatus.SUCCESS, redisServiceApi.getBit(requestDTO.getKey(), requestDTO.getOffset()));
+    }
 }

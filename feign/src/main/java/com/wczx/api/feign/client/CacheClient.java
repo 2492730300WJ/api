@@ -66,4 +66,16 @@ public interface CacheClient {
      */
     @PostMapping("/cache/delete")
     WorkResponse delete(@RequestBody CacheCommonRequestDTO requestDTO);
+
+    /**
+     * setBit
+     */
+    @PostMapping("/cache/set-bit")
+    WorkResponse setBit(@RequestBody CacheCommonRequestDTO requestDTO);
+
+    /**
+     * getBit
+     */
+    @PostMapping("/cache/get-bit")
+    WorkResponse getBit(@RequestBody CacheCommonRequestDTO requestDTO);
 }

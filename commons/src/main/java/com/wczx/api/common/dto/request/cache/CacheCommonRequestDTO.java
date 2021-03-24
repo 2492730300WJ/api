@@ -10,9 +10,9 @@ import java.util.List;
  */
 @Data
 public class CacheCommonRequestDTO {
-    private String prefix;
     private String key;
     private Integer expireSeconds;
     private String value;
     private List<String> listValue;
+    private Integer offset;
 }

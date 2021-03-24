@@ -44,7 +44,7 @@ public class ArticleController {
      * 2.无缓存，查询数据库，存入缓存
      */
     @PostMapping("/get")
-    public WorkResponse getArticle(@RequestBody ArticleCommonRequestDTO requestDTO) {
+    public WorkResponse getArticle(@RequestBody ArticleCommonRequestDTO requestDTO) throws InterruptedException {
         return new WorkResponse(WorkStatus.SUCCESS, articleService.getArticle(requestDTO));
     }
 

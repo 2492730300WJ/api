@@ -5,13 +5,25 @@ package com.wczx.api.common.constant;
  */
 public class CacheConstant {
     /**
-     * 防止缓存穿透时间
+     * token key 前缀
      */
-    public static final Integer CACHE_PENETRATION_TIME = 30;
+    public static final String TOKEN_PREFIX = "token_";
 
     /**
-     * 缓存穿透
+     * refreshToken key 前缀
      */
-    public static final String CACHE_PENETRATION_MSG = "Cache penetration";
+    public static final String REFRESH_TOKEN_PREFIX = "refreshToken_";
+    /**
+     * article key 前缀
+     */
+    public static final String ARTICLE_PREFIX = "article_";
+    /**
+     * article_cache_penetration key
+     */
+    public static final String ARTICLE_CACHE_PENETRATION_KEY= "article_cache_penetration";
+    /**
+     * article_lock_ key 前缀
+     */
+    public static final String ARTICLE_LOCK_KEY_PREFIX= "article_lock_";
 
 }

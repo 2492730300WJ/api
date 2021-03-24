@@ -6,13 +6,17 @@ import com.wczx.api.common.constant.ArticleConstant;
 import com.wczx.api.common.constant.CacheConstant;
 import com.wczx.api.common.dto.request.article.ArticleCommonRequestDTO;
 import com.wczx.api.common.dto.request.cache.CacheCommonRequestDTO;
+import com.wczx.api.common.dto.request.cache.LockCommonRequestDTO;
 import com.wczx.api.common.response.WorkException;
 import com.wczx.api.common.response.WorkResponse;
 import com.wczx.api.common.response.WorkStatus;
+import com.wczx.api.common.util.TimeUtil;
+import com.wczx.api.common.util.UUIDUtil;
 import com.wczx.api.feign.client.CacheClient;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.UUID;
 
 /**
  * @Author: wj
@@ -41,31 +45,54 @@ public class ArticleServiceImpl implements ArticleService {
      * @return
      */
     @Override
-    public Object getArticle(ArticleCommonRequestDTO requestDTO) {
+    public Object getArticle(ArticleCommonRequestDTO requestDTO) throws InterruptedException {
         if (null == requestDTO.getArticleId()) {
             throw new WorkException(WorkStatus.CHECK_PARAM);
         }
+
+        // 防止缓存穿透 使用bitmap校验 1 为 无效key
+        CacheCommonRequestDTO penetration = new CacheCommonRequestDTO();
+        penetration.setKey(CacheConstant.ARTICLE_CACHE_PENETRATION_KEY);
+        penetration.setOffset(Integer.parseInt(requestDTO.getArticleId().toString()));
+        WorkResponse penetrationFlag = cacheClient.getBit(penetration);
+        if (!WorkStatus.SUCCESS.getWorkCode().equals(penetrationFlag.getCode())) {
+            throw new WorkException(WorkStatus.FAIL);
+        }
+        // 为true 则为无效key
+        if (Boolean.valueOf(penetrationFlag.getData().toString())){
+            return null;
+        }
+
+        // 请求redis
         CacheCommonRequestDTO commonRequestDTO = new CacheCommonRequestDTO();
-        commonRequestDTO.setPrefix("article_");
-        commonRequestDTO.setKey(requestDTO.getArticleId().toString());
+        commonRequestDTO.setKey(CacheConstant.ARTICLE_PREFIX + requestDTO.getArticleId().toString());
         WorkResponse cache = cacheClient.get(commonRequestDTO);
         if (!WorkStatus.SUCCESS.getWorkCode().equals(cache.getCode())) {
             throw new WorkException(WorkStatus.FAIL);
         }
-
+        // redis里没有，去查数据库（此处需防止缓存击穿）
         if (null == cache.getData()) {
-            // 查数据库
-            // 数据库有存入redis
-            // 数据库也没有,防止缓存穿透
-            commonRequestDTO.setValue(CacheConstant.CACHE_PENETRATION_MSG);
-            // 30S有效期
-            commonRequestDTO.setExpireSeconds(CacheConstant.CACHE_PENETRATION_TIME);
-            cacheClient.set(commonRequestDTO);
-            return null;
-        }
-        if (CacheConstant.CACHE_PENETRATION_MSG.equals(cache.getData().toString())){
-            // 恶意刷信息，防止缓存穿透 直接返回null
-            return null;
+            // 开启redis锁防止缓存击穿
+            LockCommonRequestDTO lock = new LockCommonRequestDTO();
+            lock.setLockKey(CacheConstant.ARTICLE_LOCK_KEY_PREFIX + requestDTO.getArticleId());
+            lock.setExpireTime(1000);
+            lock.setUniqueValue(UUIDUtil.getRandomStr(10));
+            WorkResponse lockFlag =  cacheClient.lock(lock);
+            // 为true 则为无效key
+            if (Boolean.valueOf(lockFlag.getData().toString())){
+                // 查数据库
+                // 数据库有存入redis
+                // 数据库也没有,防止缓存穿透 使用bitmap存储
+                penetration.setValue("1");
+                cacheClient.setBit(penetration);
+                // 不需要finally
+                cacheClient.unlock(lock);
+                return null;
+            } else {
+                // 锁住了 休眠1s
+                Thread.sleep(1000);
+                return getArticle(requestDTO);
+            }
         }
         JSONObject article = JSONObject.parseObject(cache.getData().toString());
         article.put("watch", article.getIntValue("watch") + 1);

@@ -2,6 +2,7 @@ package com.wczx.api.user.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.wczx.api.common.constant.CacheConstant;
 import com.wczx.api.common.dto.request.cache.CacheCommonRequestDTO;
 import com.wczx.api.common.dto.request.user.UserRequestDTO;
 import com.wczx.api.common.response.WorkException;
@@ -66,12 +67,11 @@ public class UserServiceImpl implements UserService {
         jsonObject.put("refreshToken", refreshToken);
         // 存入redis
         CacheCommonRequestDTO requestDTO = new CacheCommonRequestDTO();
-        requestDTO.setPrefix("token_");
-        requestDTO.setKey(userInfo.getUserId().toString());
+        requestDTO.setKey(CacheConstant.TOKEN_PREFIX + userInfo.getUserId().toString());
         requestDTO.setExpireSeconds(86400);
         requestDTO.setValue(token);
         cacheClient.set(requestDTO);
-        requestDTO.setPrefix("refreshToken_");
+        requestDTO.setKey(CacheConstant.REFRESH_TOKEN_PREFIX + userInfo.getUserId().toString());
         requestDTO.setExpireSeconds(604800);
         requestDTO.setValue(refreshToken);
         cacheClient.set(requestDTO);

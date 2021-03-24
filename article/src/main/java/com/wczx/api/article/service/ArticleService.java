@@ -7,5 +7,5 @@ import com.wczx.api.common.dto.request.article.ArticleCommonRequestDTO;
  */
 public interface ArticleService {
 
-    Object getArticle(ArticleCommonRequestDTO requestDTO);
+    Object getArticle(ArticleCommonRequestDTO requestDTO) throws InterruptedException;
 }
