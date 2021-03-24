@@ -8,4 +8,6 @@ import com.wczx.api.common.dto.request.article.ArticleCommonRequestDTO;
 public interface ArticleService {
 
     Object getArticle(ArticleCommonRequestDTO requestDTO) throws InterruptedException;
+
+    Object starOrNoStarArticle(ArticleCommonRequestDTO requestDTO) throws InterruptedException;
 }

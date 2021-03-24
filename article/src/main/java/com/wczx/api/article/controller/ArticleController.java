@@ -3,17 +3,11 @@ package com.wczx.api.article.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.wczx.api.article.service.ArticleService;
 import com.wczx.api.common.dto.request.article.ArticleCommonRequestDTO;
-import com.wczx.api.common.dto.request.cache.CacheCommonRequestDTO;
 import com.wczx.api.common.dto.request.user.UserRequestDTO;
-import com.wczx.api.common.dto.response.user.UserInfoResponseDTO;
-import com.wczx.api.common.response.WorkException;
 import com.wczx.api.common.response.WorkResponse;
 import com.wczx.api.common.response.WorkStatus;
-import com.wczx.api.feign.client.CacheClient;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.wczx.api.common.session.SessionInfo;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -26,7 +20,6 @@ public class ArticleController {
 
     @Resource
     ArticleService articleService;
-
 
 
     /**
@@ -78,8 +71,11 @@ public class ArticleController {
      * 大概格式 ：xx 在 time 点赞了 您的 xxx文章
      */
     @PostMapping("/star")
-    public WorkResponse starArticle(@RequestBody UserRequestDTO userRequestDTO) {
-        return new WorkResponse(WorkStatus.SUCCESS, null);
+    public WorkResponse starArticle(@RequestHeader("sessionInfo") String sessionInfo, @RequestBody ArticleCommonRequestDTO requestDTO) throws InterruptedException {
+        SessionInfo info = JSONObject.parseObject(sessionInfo, SessionInfo.class);
+        requestDTO.setUserId(info.getUserId());
+        requestDTO.setStar(1);
+        return new WorkResponse(WorkStatus.SUCCESS, articleService.starOrNoStarArticle(requestDTO));
     }
 
     /**
@@ -88,8 +84,11 @@ public class ArticleController {
      * 2.存入缓存or修改缓存
      */
     @PostMapping("/no-star")
-    public WorkResponse noStarArticle(@RequestBody UserRequestDTO userRequestDTO) {
-        return new WorkResponse(WorkStatus.SUCCESS, null);
+    public WorkResponse noStarArticle(@RequestHeader("sessionInfo") String sessionInfo, @RequestBody ArticleCommonRequestDTO requestDTO) throws InterruptedException {
+        SessionInfo info = JSONObject.parseObject(sessionInfo, SessionInfo.class);
+        requestDTO.setUserId(info.getUserId());
+        requestDTO.setStar(0);
+        return new WorkResponse(WorkStatus.SUCCESS, articleService.starOrNoStarArticle(requestDTO));
     }
 
     /**

@@ -17,7 +17,8 @@ public enum WorkStatus {
     CHECK_PARAM(206,"请检查传入参数"),
     AUTH_ERROR(207,"权限校验异常"),
     // 300 : article
-    ARTICLE_NOT_FOUND(300,"未找到该文章")
+    ARTICLE_NOT_FOUND(300,"未找到该文章"),
+    ARTICLE_STAR_EXIST(301,"您已经点赞过了")
     ;
 
     /**

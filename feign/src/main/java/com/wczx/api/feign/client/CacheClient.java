@@ -78,4 +78,10 @@ public interface CacheClient {
      */
     @PostMapping("/cache/get-bit")
     WorkResponse getBit(@RequestBody CacheCommonRequestDTO requestDTO);
+
+    /**
+     * bit count
+     */
+    @PostMapping("/cache/bit-count")
+    WorkResponse bitCount(@RequestBody CacheCommonRequestDTO requestDTO);
 }

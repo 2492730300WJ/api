@@ -68,5 +68,18 @@ public interface RedisServiceApi {
      */
     boolean setBit(String key,String value,Integer offset);
 
+    /**
+     * get bit
+     * @param key
+     * @param offset
+     * @return
+     */
     boolean getBit(String key, Integer offset);
+
+    /**
+     * count bit
+     * @param key
+     * @return
+     */
+    Long bitCount(String key);
 }

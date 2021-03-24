@@ -158,6 +158,17 @@ public class RedisServiceImpl implements RedisServiceApi {
         }
     }
 
+    @Override
+    public Long bitCount(String key) {
+        Jedis jedis = null;
+        try {
+            jedis = jedisPool.getResource();
+            return jedis.bitcount(key);
+        } finally {
+            returnToPool(jedis);
+        }
+    }
+
 
     /**
      * 将redis连接对象归还到redis连接池

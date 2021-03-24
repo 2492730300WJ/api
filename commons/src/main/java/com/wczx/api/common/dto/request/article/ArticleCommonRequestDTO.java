@@ -8,4 +8,6 @@ import lombok.Data;
 @Data
 public class ArticleCommonRequestDTO {
     private Long articleId;
+    private Long userId;
+    private Integer star;
 }

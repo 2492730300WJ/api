@@ -115,4 +115,12 @@ public class CacheController<T> {
     public WorkResponse getBit(@RequestBody CacheCommonRequestDTO requestDTO) {
         return new WorkResponse(WorkStatus.SUCCESS, redisServiceApi.getBit(requestDTO.getKey(), requestDTO.getOffset()));
     }
+
+    /**
+     * get bit
+     */
+    @PostMapping("/bit-count")
+    public WorkResponse bitCount(@RequestBody CacheCommonRequestDTO requestDTO) {
+        return new WorkResponse(WorkStatus.SUCCESS, redisServiceApi.bitCount(requestDTO.getKey()));
+    }
 }

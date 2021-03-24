@@ -17,13 +17,21 @@ public class CacheConstant {
      * article key 前缀
      */
     public static final String ARTICLE_PREFIX = "article_";
-    /**
-     * article_cache_penetration key
-     */
-    public static final String ARTICLE_CACHE_PENETRATION_KEY= "article_cache_penetration";
+
     /**
      * article_lock_ key 前缀
      */
     public static final String ARTICLE_LOCK_KEY_PREFIX= "article_lock_";
+
+    /**
+     * article_star_ key 前缀
+     */
+
+    public static final String ARTICLE_STAR_PREFIX= "article_star_";
+    /**
+     * article_cache_penetration key
+     */
+    public static final String ARTICLE_CACHE_PENETRATION_KEY= "article_cache_penetration";
+
 
 }
