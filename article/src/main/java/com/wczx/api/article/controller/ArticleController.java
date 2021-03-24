@@ -1,8 +1,11 @@
 package com.wczx.api.article.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.wczx.api.article.service.ArticleService;
+import com.wczx.api.common.dto.request.article.ArticleCommonRequestDTO;
 import com.wczx.api.common.dto.request.cache.CacheCommonRequestDTO;
 import com.wczx.api.common.dto.request.user.UserRequestDTO;
+import com.wczx.api.common.dto.response.user.UserInfoResponseDTO;
 import com.wczx.api.common.response.WorkException;
 import com.wczx.api.common.response.WorkResponse;
 import com.wczx.api.common.response.WorkStatus;
@@ -21,46 +24,28 @@ import javax.annotation.Resource;
 @RequestMapping("article")
 public class ArticleController {
 
-    /*
-    Redis Value
-    {
-        "title": "文章标题",
-        "content": "文章内容",
-        "stat": 1,
-        "fork": 1，
-        "watch":1,
-        "articleId":1,
-        "createTime":"2021-01-01 11:11:11",
-        "updateTime":"2021-01-01 12:12:12"
-    }
-     */
-
     @Resource
     ArticleService articleService;
 
-    @Resource
-    CacheClient cacheClient;
+
+
+    /**
+     * 获取文章列表
+     */
+    @PostMapping("/list")
+    public WorkResponse getArticleList(@RequestBody UserRequestDTO userRequestDTO) {
+        return new WorkResponse(WorkStatus.SUCCESS, null);
+    }
+
 
     /**
      * 获取文章详情
-     * 1.查询缓存，增加缓存阅读列表 判断同一用户看同一篇文章一天只记录一次,有缓存返回，缓存内阅读数+1，
+     * 1.查询缓存，增加缓存阅读列表 有缓存返回，缓存内阅读数+1，
      * 2.无缓存，查询数据库，存入缓存
      */
     @PostMapping("/get")
-    public WorkResponse getArticle(@RequestBody UserRequestDTO userRequestDTO) {
-        CacheCommonRequestDTO commonRequestDTO = new CacheCommonRequestDTO();
-        commonRequestDTO.setPrefix("article_");
-        commonRequestDTO.setKey("1");
-        WorkResponse cache = cacheClient.get(commonRequestDTO);
-        if (!WorkStatus.SUCCESS.getWorkCode().equals(cache.getCode())){
-            throw new WorkException(WorkStatus.FAIL);
-        }
-        commonRequestDTO.setValue("1");
-        if(null != cache.getData()){
-            commonRequestDTO.setValue((Integer.valueOf(cache.getData().toString()) + 1 ) + "");
-        }
-        cacheClient.set(commonRequestDTO);
-        return new WorkResponse(WorkStatus.SUCCESS, null);
+    public WorkResponse getArticle(@RequestBody ArticleCommonRequestDTO requestDTO) {
+        return new WorkResponse(WorkStatus.SUCCESS, articleService.getArticle(requestDTO));
     }
 
     /**

@@ -53,6 +53,9 @@ public class CacheController<T> {
      */
     @PostMapping("/set")
     public WorkResponse set(@RequestBody CacheCommonRequestDTO requestDTO) {
+        if (null == requestDTO.getExpireSeconds()) {
+            requestDTO.setExpireSeconds(0);
+    }
         return new WorkResponse(WorkStatus.SUCCESS, redisServiceApi.set(requestDTO.getPrefix(), requestDTO.getKey(), requestDTO.getExpireSeconds(), requestDTO.getValue()));
     }
 

@@ -13,7 +13,7 @@
    {
         "title": "文章标题",
         "content": "文章内容",
-        "stat": 1,
+        "star": 1,
         "fork": 1，
         "watch":1,
         "articleId":1,
@@ -29,17 +29,15 @@
 
 ## 文章列表
 
-## 点赞（star） && 浏览（watch） && 分享（fork）
+## 点赞（star） && 分享（fork）
  - RedisKey
    ```
     article_star_a  a:文章ID  bitmap
-    article_watch_a a:文章ID  set
     article_fork_a  a:文章ID  set
    ```
  - RedisValue
    ```
    star_b b:点赞人id
-   watch_b_c b:点赞人id c:时间：20210101
    fork_b b:点赞人id
    ```    
 

@@ -50,7 +50,7 @@ public class AuthFilter implements GlobalFilter, Ordered {
 
             List<String> whiteUrl = new ArrayList<>();
             whiteUrl.add("/user/login");
-
+            whiteUrl.add("/article/get");
             log.info("request filter:" + basePath + url);
             //跳过白名单
             if (null != whiteUrl && whiteUrl.contains(url)) {

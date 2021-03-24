@@ -15,7 +15,9 @@ public enum WorkStatus {
     LOGIN_TIME_OUT(204,"登录已过期，请重新登录"),
     PLEASE_LOGIN(205,"请先登录您的账号"),
     CHECK_PARAM(206,"请检查传入参数"),
-    AUTH_ERROR(207,"权限校验异常")
+    AUTH_ERROR(207,"权限校验异常"),
+    // 300 : article
+    ARTICLE_NOT_FOUND(300,"未找到该文章")
     ;
 
     /**
