@@ -1,6 +1,8 @@
 package com.wczx.api.article.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.wczx.api.article.entity.Article;
+import com.wczx.api.article.mapper.ArticleMapper;
 import com.wczx.api.article.service.ArticleService;
 import com.wczx.api.common.constant.ArticleConstant;
 import com.wczx.api.common.constant.CacheConstant;
@@ -25,6 +27,9 @@ public class ArticleServiceImpl implements ArticleService {
     @Resource
     CacheClient cacheClient;
 
+    @Resource
+    ArticleMapper articleMapper;
+
 
     /**
      * Redis Value
@@ -37,7 +42,7 @@ public class ArticleServiceImpl implements ArticleService {
      * "articleId":1,
      * "createTime":"2021-01-01 11:11:11",
      * "updateTime":"2021-01-01 12:12:12",
-     * "author":1
+     * "userId":1
      * }
      *
      * @param requestDTO
@@ -97,13 +102,32 @@ public class ArticleServiceImpl implements ArticleService {
             // 为true 则为无效key
             if (Boolean.valueOf(lockFlag.getData().toString())) {
                 // 查数据库
+                Article article = articleMapper.selectById(requestDTO.getArticleId());
+                if(null == article){
+                    // 数据库也没有,防止缓存穿透 使用bitmap存储
+                    penetration.setValue("1");
+                    cacheClient.setBit(penetration);
+                    // 不需要finally
+                    cacheClient.unlock(lock);
+                    return null;
+                }
                 // 数据库有存入redis
-                // 数据库也没有,防止缓存穿透 使用bitmap存储
-                penetration.setValue("1");
-                cacheClient.setBit(penetration);
-                // 不需要finally
+                JSONObject articleRedis = new JSONObject();
+                articleRedis.put("title",article.getTitle());
+                articleRedis.put("content",article.getContent());
+                articleRedis.put("star",article.getStar());
+                articleRedis.put("fork",article.getFork());
+                articleRedis.put("watch",article.getWatch());
+                articleRedis.put("articleId",article.getArticleId());
+                articleRedis.put("createTime",article.getCreateTime());
+                articleRedis.put("updateTime",article.getUpdateTime());
+                articleRedis.put("userId",article.getUserId());
+                articleRedis.put("privateFlag",article.getPrivateFlag());
+                commonRequestDTO.setExpireSeconds(ArticleConstant.HOT_ARTICLE_TIME);
+                commonRequestDTO.setValue(articleRedis.toString());
+                cacheClient.set(commonRequestDTO);
                 cacheClient.unlock(lock);
-                return null;
+                return articleRedis;
             } else {
                 // 锁住了 休眠1s
                 Thread.sleep(1000);
@@ -158,7 +182,7 @@ public class ArticleServiceImpl implements ArticleService {
         commonRequestDTO.setValue(article.toString());
         cacheClient.set(commonRequestDTO);
         // 3.拿出作者id，给作者发通知(取消不发)
-        System.out.println(article.getString("author"));
+        System.out.println(article.getString("userId"));
         return null;
     }
 }
