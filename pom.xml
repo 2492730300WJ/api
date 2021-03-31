@@ -18,6 +18,7 @@
         <module>auth</module>
         <module>feign</module>
         <module>schedule</module>
+        <module>monitor</module>
     </modules>
     <packaging>pom</packaging>
 

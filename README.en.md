@@ -34,6 +34,7 @@ This project provides a series of APIs for the app to use as the background inte
  -  mq       --Message service
  -  auth     --Authentication service
  -  schedule --Time service
+ -  monitor  --Monitor service
 ## Common package
  -         feign    FeignClient  
  -         commons  dto ，constant
@@ -63,6 +64,7 @@ This project provides a series of APIs for the app to use as the background inte
         --WebSocket
         --JWT
         --redis
+        --SpringBoot admin
     -Server
         --Docker
         --Jenkins

@@ -1,6 +1,5 @@
 server:
   port: ${API_GATEWAY_PORT}
-
 spring:
   application:
     name: api-gateway
@@ -51,6 +50,17 @@ spring:
           uri: lb://api-websocket #uri以lb://开头（lb代表从注册中心获取服务)
           predicates:
             - Path=/ws/**
+management:
+  health:
+    redis:
+      enabled: false
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: ALWAYS
 ribbon:
   eager-load:
     enabled: true

@@ -45,3 +45,14 @@ ribbon:
   eager-load:
     enabled: true
     clients: api-auth,api-user,api-gateway,api-cache
+management:
+  health:
+    redis:
+      enabled: false
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: ALWAYS

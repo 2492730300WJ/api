@@ -1,0 +1,26 @@
+server:
+  port: ${API_MONITOR_PORT}
+
+spring:
+  application:
+    name: api-monitor
+  zipkin:
+    base-url: ${ZIPKIN_SERVER_ADDR}
+  sleuth:
+    sampler:
+      probability: 1
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_SERVER_ADDR}
+management:
+  health:
+    redis:
+      enabled: false
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: ALWAYS

@@ -34,6 +34,7 @@
  -  mq       消息服务
  -  auth     鉴权服务
  -  schedule 定时服务
+ -  monitor  监控服务
 ## 公共包
  -         feign    FeignClient  
  -         commons  dto ，constant
@@ -63,6 +64,7 @@
         --WebSocket
         --JWT
         --redis
+        --SpringBoot admin
     -服务器
         --Docker
         --Jenkins
